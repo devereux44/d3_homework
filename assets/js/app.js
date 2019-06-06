@@ -1,6 +1,6 @@
 // @TODO: YOUR CODE HERE!
 // Define SVG area dimensions
-var svgWidth = 960;
+var svgWidth = 1000;
 var svgHeight = 660;
 
 // Define the chart's margins as an object
@@ -35,7 +35,7 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
 
       // Configure a band scale for the horizontal axis with a padding of 0.1 (10%)
   var xLinearScale = d3.scaleLinear()
-  .domain(censusData.map(d => d.poverty))
+  .domain([9, d3.max(censusData, d => d.poverty)])
   .range([0, chartWidth]);
 
   // Create a linear scale for the vertical axis.
@@ -46,7 +46,7 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
   // Create two new functions passing our scales in as arguments
   // These will be used to create the chart's axes
   var bottomAxis = d3.axisBottom(xLinearScale);
-  var leftAxis = d3.axisLeft(yLinearScale).ticks(10);
+  var leftAxis = d3.axisLeft(yLinearScale).ticks(15);
 
   // Append two SVG group elements to the chartGroup area,
   // and create the bottom and left axes inside of them
@@ -65,8 +65,17 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
     .attr("cy", d => yLinearScale(d.obesity))
     .attr("r", 15)
     .style("fill", "skyBlue")
-    .attr("opacity", ".5")
-    .text("Hi");
+    .attr("opacity", ".5");
+
+    chartGroup.selectAll("text")
+      .data(censusData)
+      .enter()
+      .append("text")     
+      .text((d) => (d.abbr))
+      .attr("x", d => xLinearScale(d.poverty))
+      .attr("y", d => yLinearScale(d.obesity))
+      .attr("font-size", "9px")
+      .attr("fill", "darkgreen");
 
     // Create axes labels
     chartGroup.append("text")
@@ -81,11 +90,6 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
       .attr("transform", `translate(${chartWidth / 2}, ${chartHeight + chartMargin.top + 5})`)
       .attr("class", "axisText")
       .text("Poverty %");
-    chartGroup.selectAll("text")
-      .data(censusData)
-      .enter()
-      .append("text")
-      .text("hi")
-      .attr("font-size", "15px")
-      .attr("fill", "darkgreen");
+
+
 });
